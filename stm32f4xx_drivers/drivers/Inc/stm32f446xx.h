@@ -12,6 +12,37 @@
 
 #define __vo volatile
 
+/****************** Processor Specific details *******************/
+
+/*
+ * ARM CoetexMX processor NVIC_ISERx register addresses
+ */
+
+#define NVIC_ISER0             (__vo uint32_t*)0xE000E100
+#define NVIC_ISER1             (__vo uint32_t*)0xE000E104
+#define NVIC_ISER2             (__vo uint32_t*)0xE000E108
+#define NVIC_ISER3             (__vo uint32_t*)0xE000E10C
+
+
+/*
+ * ARM CoetexMX processor NVIC_ICERx register addresses
+ */
+
+#define NVIC_ICER0             (__vo uint32_t*)0XE000E180
+#define NVIC_ICER1             (__vo uint32_t*)0xE000E104
+#define NVIC_ICER2             (__vo uint32_t*)0xE000E108
+#define NVIC_ICER3             (__vo uint32_t*)0xE000E10C
+
+
+/*
+ * ARM CoetexMX processor NVIC_IPRx register base addresses
+ */
+
+#define NVIC_IPR               (__vo uint32_t*)0xE000E400
+#define NO_PR_BITS_IMPLEMENTED 4
+
+
+
 /*
  * Base address of FLASH and SRAM memories
  */
@@ -125,6 +156,26 @@ typedef struct {
 	__vo uint32_t AFR[2];
 } GPIO_Regdef_t;
 
+typedef struct {
+	__vo uint32_t IMR;
+	__vo uint32_t EMR;
+	__vo uint32_t RTSR;
+	__vo uint32_t FTSR;
+	__vo uint32_t SWIER;
+	__vo uint32_t PR;
+} EXTI_Regdef_t;
+
+typedef struct {
+	__vo uint32_t MEMRMP;
+	__vo uint32_t PMC;
+	__vo uint32_t EXTICR[4];
+	     uint32_t RESERVED1[2];
+	__vo uint32_t CMPCR;
+	     uint32_t RESERVED2[2];
+	__vo uint32_t CFGR;
+} SYSCFG_Regdef_t;
+
+
 
 /*
  * peripheral definition (peripheral base address typecasted to xxx_Regdef_t)
@@ -140,6 +191,8 @@ typedef struct {
 #define GPIOH                    ((GPIO_Regdef_t*)GPIOH_BASEADDR)
 
 #define RCC                      ((RCC_Regdef_t*)RCC_BASEADDR)
+#define EXTI                     ((EXTI_Regdef_t*)EXTI_BASEADDR)
+#define SYSCFG                   ((SYSCFG_Regdef_t*)SYSCFG_BASEADDR)
 
 /*
  * Clock Enable Macros for GPIOx peripherals
@@ -253,6 +306,40 @@ typedef struct {
 #define GPIOF_REG_RESET()         do{(RCC->AHB1RSTR |= (1 << 5)); (RCC->AHB1RSTR &= ~(1 << 5));}while(0)
 #define GPIOG_REG_RESET()         do{(RCC->AHB1RSTR |= (1 << 6)); (RCC->AHB1RSTR &= ~(1 << 6));}while(0)
 #define GPIOH_REG_RESET()         do{(RCC->AHB1RSTR |= (1 << 7)); (RCC->AHB1RSTR &= ~(1 << 7));}while(0)
+
+
+/*
+ * Return portcoode for given gpiox
+ */
+
+#define GPIO_BASE_ADDR_TO_CODE(x) ((x == GPIOA)?0:\
+		                          (x == GPIOB)?1:\
+				                  (x == GPIOC)?2:\
+						          (x == GPIOD)?3:\
+								  (x == GPIOE)?4:\
+							      (x == GPIOF)?5:\
+								  (x == GPIOG)?6:0 )
+
+
+/*
+ * IRQ (Interrupt Request) Numbers of STM32F446xx MCU
+ */
+
+#define IRQ_NO_EXTIO              6
+#define IRQ_NO_EXTI1              7
+#define IRQ_NO_EXTI2              8
+#define IRQ_NO_EXTI3              9
+#define IRQ_NO_EXTI4              10
+#define IRQ_NO_EXTI9_5            23
+#define IRQ_NO_EXTI15_10          40
+
+
+/*
+ * Macros for all the posible priority levels
+ */
+
+#define NVIC_IRQ_PRI0             0
+#define NVIC_IRQ_PRI15            15
 
 
 /*

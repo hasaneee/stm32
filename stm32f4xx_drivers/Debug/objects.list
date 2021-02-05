@@ -1,4 +1,4 @@
-"Src/001gpio_onboard_led_output.o"
+"Src/002_gpio_exercise_external_interrupt.o"
 "Src/syscalls.o"
 "Src/sysmem.o"
 "Startup/startup_stm32f446retx.o"
